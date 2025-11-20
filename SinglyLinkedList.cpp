@@ -1,276 +1,215 @@
 #include <iostream>
+#include "SinglyCircular.h"
 using namespace std;
-class Node
+
+Node::Node(int val)
 {
-private:
-    int data;
-    Node *next;
-
-    Node(int val)
-    {
-        data = val;
-        next = nullptr;
-    }
-    friend class List;
-};
-
-class List
+    data = val;
+}
+int Node::getData()
 {
-    Node *head;
-    Node *tail;
+    return data;
+}
+Node *Node::getNext()
+{
+    return next;
+}
+void Node ::setNext(Node *n)
+{
+    next = n;
+}
 
-public:
-    List()
+List::List()
+{
+    head = tail = nullptr;
+}
+Node *List::getHead()
+{
+    return head;
+}
+Node *List::getTail()
+{
+    return tail;
+}
+void List::setHead(Node *h)
+{
+    head = h;
+}
+void List::setTail(Node *t)
+{
+    tail = t;
+}
+bool List::isEmpty()
+{
+    return head == nullptr;
+}
+int List::size()
+{
+    int size = 0;
+    if (isEmpty())
     {
-        head = nullptr;
-        tail = nullptr;
+        return size;
     }
-    void push_front(int val) // O(1)
-    {
-        Node *newNode = new Node(val);
-        if (head == nullptr)
-        {
-            head = tail = newNode;
-            return;
-        }
-        else
-        {
-            newNode->next = head;
-            head = newNode;
-        }
-    }
-
-    void push_back(int val) // O(1)
-    {
-        Node *newNode = new Node(val);
-        if (head == nullptr)
-        {
-            head = tail = newNode;
-        }
-        else
-        {
-            tail->next = newNode;
-            tail = newNode;
-        }
-    }
-
-    void pop_front() // O(1)
-    {
-        if (head != nullptr)
-        {
-            Node *temp = head;
-            head = head->next;
-            temp->next = nullptr;
-            delete temp;
-        }
-        else
-        {
-            cout << "List is Empty" << endl;
-        }
-    }
-
-    void pop_back() // O(n)
-    {
-        if (head == nullptr)
-        {
-            cout << "List is empty" << endl;
-            return;
-        }
-        else
-        {
-            Node *temp = head;
-            while (temp->next != tail)
-            {
-                temp = temp->next;
-            }
-            temp->next = nullptr;
-            delete tail;
-            tail = temp;
-            temp->next = nullptr;
-        }
-    }
-
-    void insert(int val, int ind) // O(n)
-    {
-        int len = 0;
-        Node *tempLen = head;
-        while (tempLen != nullptr)
-        {
-            len++;
-            tempLen = tempLen->next;
-            // cout<<"Length is : "<<len<<endl;
-        }
-        if (ind < 0)
-        {
-            cout << "Invalid Index" << endl;
-            return;
-        }
-        else if (ind == 0)
-        {
-            push_front(val);
-        }
-        else if (ind == len)
-        {
-            push_back(val);
-        }
-        else if (ind > len)
-        {
-            cout << "Index out of range" << endl;
-            return;
-        }
-        else
-        {
-            Node *temp = head;
-            for (int i = 0; i < ind - 1; i++)
-            {
-                temp = temp->next;
-            }
-            Node *newNode = new Node(val);
-            newNode->next = temp->next;
-            temp->next = newNode;
-        }
-    }
-
-    void remove(int index)
-    {
-        if (head == nullptr)
-        {
-            cout << "List is empty" << endl;
-            return;
-        }
-        if (index == 0)
-        {
-            pop_front();
-            return;
-        }
-        if (index < 0)
-        {
-            cout << "Invalid Index" << endl;
-            return;
-        }
-        Node *temp = head;
-        for (int i = 0; temp != nullptr && i < index - 1; i++)
-        {
-            temp = temp->next;
-        }
-        if (temp == nullptr || temp->next == nullptr)
-        {
-            cout << "Invalid index" << endl;
-            return;
-        }
-        Node *del = temp->next;
-        temp->next = temp->next->next;
-        delete del;
-    }
-    void removeAll(int val)
-    {
-        if (head == nullptr)
-        {
-            cout << "List is empty" << endl;
-            return;
-        }
-
-        while (head != nullptr && head->data == val)
-        {
-            pop_front();
-        }
-
-        if (head == nullptr)
-            return;
-
-        Node *curr = head;
-
-        while (curr->next != nullptr)
-        {
-            if (curr->next->data == val)
-            {
-                Node *toDel = curr->next;
-                curr->next = curr->next->next;
-                delete toDel;
-            }
-            else
-            {
-                curr = curr->next;
-            }
-        }
-    }
-
-    void search(int val) // O(n)
+    else
     {
         Node *temp = head;
-        int index = 0;
-        while (temp != nullptr)
+        do
         {
-            if (temp->data == val)
-            {
-                cout << val << " is present at index " << index << endl;
-            }
-            index++;
-            temp = temp->next;
-        }
+            temp = temp->getNext();
+            size++;
+        } while (temp != head);
     }
+    return size;
+}
 
-    // Sorting
-    void sort()
+int List::count(int val)
+{
+    int count = 0;
+    if (isEmpty())
     {
-        if (head == nullptr || head->next == nullptr)
-        {
-            return;
-        }
-        for (Node *prev = head; prev->next != nullptr; prev = prev->next)
-        {
-            for (Node *curr = prev->next; curr != nullptr;)
-            {
-                if (prev->data <= curr->data)
-                {
-                    curr = curr->next;
-                }
-                else
-                {
-                    int temp = prev->data;
-                    prev->data = curr->data;
-                    curr->data = temp;
-                    curr = curr->next;
-                }
-            }
-        }
+        return count;
     }
-    void display() // O(n)
+    else
     {
         Node *temp = head;
-        while (temp != nullptr)
+        do
         {
-            cout << temp->data << "\t";
-            temp = temp->next;
-        }
-        cout << endl;
+            if (temp->getData() == val)
+            {
+                count++;
+            }
+            temp = temp->getNext();
+        } while (temp != head);
     }
-};
-int main()
+    return count;
+}
+int List::getFront()
 {
-    List L1;
-    L1.push_front(2);
-    L1.display();
-    L1.push_front(7);
-    L1.display();
-    L1.push_front(5);
-    L1.display();
-    L1.push_back(3);
-    L1.push_back(3);
-    L1.display();
-    L1.push_back(7);
-    L1.display();
-    // L1.pop_front();
-    // L1.display();
-    // L1.pop_back();
-    // L1.display();
-    // L1.insert(12, 1);
-    // L1.insert(99, 4);
-    // L1.display();
-    // L1.removeAll(7);
-    L1.sort();
-    L1.display();
-    // L1.search(12);
-    // L1.search(3);
-    return 0;
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return -1;
+    }
+    else
+    {
+        return head->getData();
+    }
+}
+int List::getBack()
+{
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return -1;
+    }
+    else
+    {
+        return tail->getData();
+    }
+}
+
+void List::display()
+{
+    if (head == nullptr)
+    {
+        cout << "List is empty" << endl;
+        return;
+    }
+    else
+    {
+        Node *temp = head;
+        do
+        {
+            cout << temp->getData() << " ";
+            temp = temp->getNext();
+        } while (temp != head);
+    }
+}
+
+void List::push_front(int val)
+{
+    Node *newNode = new Node(val);
+    if (isEmpty())
+    {
+        head = tail = newNode;
+        tail->setNext(head);
+    }
+    else
+    {
+        newNode->setNext(head);
+        tail->setNext(newNode);
+        head = newNode;
+    }
+}
+void List::pop_front()
+{
+    if (isEmpty())
+    {
+        return;
+    }
+    else if (head->getNext() == head)
+    {
+        delete head;
+        head = tail = nullptr;
+    }
+    else
+    {
+        Node *temp = head;
+        head = head->getNext();
+        tail->setNext(head);
+        delete temp;
+    }
+}
+void List::push_back(int val)
+{
+    Node *newNode = new Node(val);
+    if (isEmpty())
+    {
+        head = tail = newNode;
+        tail->setNext(head);
+    }
+    else
+    {
+        tail->setNext(newNode);
+        tail = newNode;
+        newNode->setNext(head);
+    }
+}
+void List::pop_back()
+{
+    if (isEmpty())
+    {
+        cout << "List is Empty\n";
+        return;
+    }
+    else
+    {
+        Node *temp = head;
+        while (temp->getNext() != tail)
+        {
+            temp = temp->getNext();
+        }
+        tail = temp;
+        temp = temp->getNext();
+        tail->setNext(head);
+        delete temp;
+        temp = nullptr;
+    }
+}
+List::~List()
+{
+    if (head == nullptr)
+        return;
+    Node *start = head;
+    Node *temp = head;
+    Node *nextNode;
+
+    do
+    {
+        nextNode = temp->getNext();
+        delete temp;
+        temp = nextNode;
+    } while (temp != start);
+
+    head = tail = nullptr;
 }
