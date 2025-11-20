@@ -1,5 +1,3 @@
-#pragma once
-
 class Node
 {
     int data;
@@ -30,4 +28,5 @@ public:
     void push_front(int val);
     void pop_front();
     void display();
+
 };
