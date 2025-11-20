@@ -27,6 +27,9 @@ public:
     void setTail(Node *t);
     void push_front(int val);
     void pop_front();
+    void push_back(int val);
+    void pop_back();
     void display();
 
 };
+
