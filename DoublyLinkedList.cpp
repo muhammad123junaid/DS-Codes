@@ -247,3 +247,14 @@ List::~List()
     }
     head = tail = nullptr;
 }
+int main()
+{
+    List L1;
+    L1.push_back(18);
+    L1.push_back(2);
+    L1.push_front(6);
+    L1.push_front(9);
+    L1.display();
+    return 0;
+}
+
