@@ -1,11 +1,40 @@
 #include <iostream>
-#include "SinglyCircular.h"
 using namespace std;
-
-Node::Node(int val)
+class Node
 {
-    data = val;
-}
+    int data;
+    Node *next;
+
+public:
+    Node(int val = 0);
+    int getData();
+    Node *getNext();
+    void setNext(Node *n);
+};
+class List
+{
+    Node *head;
+    Node *tail;
+
+public:
+    List();
+    ~List();
+    bool isEmpty();
+    int size();
+    int count(int val);
+    int getFront();
+    int getBack();
+    Node *getHead();
+    Node *getTail();
+    void setHead(Node *h);
+    void setTail(Node *t);
+    void push_front(int val);
+    void pop_front();
+    void push_back(int val);
+    void pop_back();
+    void display();
+};
+Node::Node(int val) : data(val), next(nullptr) {}
 int Node::getData()
 {
     return data;
@@ -50,14 +79,11 @@ int List::size()
     {
         return size;
     }
-    else
+    Node *temp = head;
+    while (temp != nullptr)
     {
-        Node *temp = head;
-        do
-        {
-            temp = temp->getNext();
-            size++;
-        } while (temp != head);
+        size++;
+        temp = temp->getNext();
     }
     return size;
 }
@@ -69,17 +95,14 @@ int List::count(int val)
     {
         return count;
     }
-    else
+    Node *temp = head;
+    while (temp != nullptr)
     {
-        Node *temp = head;
-        do
+        if (temp->getData() == val)
         {
-            if (temp->getData() == val)
-            {
-                count++;
-            }
-            temp = temp->getNext();
-        } while (temp != head);
+            count++;
+        }
+        temp = temp->getNext();
     }
     return count;
 }
@@ -115,14 +138,11 @@ void List::display()
         cout << "List is empty" << endl;
         return;
     }
-    else
+    Node *temp = head;
+    while (temp != nullptr)
     {
-        Node *temp = head;
-        do
-        {
-            cout << temp->getData() << " ";
-            temp = temp->getNext();
-        } while (temp != head);
+        cout << temp->getData() << " ";
+        temp = temp->getNext();
     }
 }
 
@@ -132,12 +152,10 @@ void List::push_front(int val)
     if (isEmpty())
     {
         head = tail = newNode;
-        tail->setNext(head);
     }
     else
     {
         newNode->setNext(head);
-        tail->setNext(newNode);
         head = newNode;
     }
 }
@@ -147,16 +165,10 @@ void List::pop_front()
     {
         return;
     }
-    else if (head->getNext() == head)
-    {
-        delete head;
-        head = tail = nullptr;
-    }
     else
     {
         Node *temp = head;
         head = head->getNext();
-        tail->setNext(head);
         delete temp;
     }
 }
@@ -166,13 +178,11 @@ void List::push_back(int val)
     if (isEmpty())
     {
         head = tail = newNode;
-        tail->setNext(head);
     }
     else
     {
         tail->setNext(newNode);
         tail = newNode;
-        newNode->setNext(head);
     }
 }
 void List::pop_back()
@@ -182,6 +192,13 @@ void List::pop_back()
         cout << "List is Empty\n";
         return;
     }
+    else if (head == tail)
+    {
+
+        delete head;
+        head = tail = nullptr;
+        return;
+    }
     else
     {
         Node *temp = head;
@@ -189,27 +206,25 @@ void List::pop_back()
         {
             temp = temp->getNext();
         }
+        delete tail;
         tail = temp;
-        temp = temp->getNext();
-        tail->setNext(head);
-        delete temp;
-        temp = nullptr;
+        tail->setNext(nullptr);
     }
 }
 List::~List()
 {
     if (head == nullptr)
+    {
         return;
-    Node *start = head;
+    }
     Node *temp = head;
     Node *nextNode;
 
-    do
+    while (temp != nullptr)
     {
         nextNode = temp->getNext();
         delete temp;
         temp = nextNode;
-    } while (temp != start);
-
+    }
     head = tail = nullptr;
 }
