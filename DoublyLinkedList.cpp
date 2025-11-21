@@ -7,52 +7,184 @@ class Node
     Node *prev;
 
 public:
-    Node(int val)
-    {
-        data = val;
-        next = prev = nullptr;
-    }
-    friend class DoublyList;
+    Node(int val = 0);
+    int getData();
+    Node *getNext();
+    Node *getPrev();
+    void setNext(Node *n);
+    void setPrev(Node *n);
 };
-
-class DoublyList
+class List
 {
     Node *head;
     Node *tail;
 
 public:
-    DoublyList()
+    List();
+    ~List();
+    bool isEmpty();
+    int size();
+    int count(int val);
+    int getFront();
+    int getBack();
+    Node *getHead();
+    Node *getTail();
+    void setHead(Node *h);
+    void setTail(Node *t);
+    void push_front(int val);
+    void pop_front();
+    void push_back(int val);
+    void pop_back();
+    void display();
+};
+Node::Node(int val) : data(val), next(nullptr),prev(nullptr) {}
+int Node::getData()
+{
+    return data;
+}
+Node *Node::getNext()
+{
+    return next;
+}
+void Node ::setNext(Node *n)
+{
+    next = n;
+}
+Node *Node::getPrev()
+{
+    return prev;
+}
+void Node ::setPrev(Node *n)
+{
+    prev = n;
+}
+
+List::List()
+{
+    head = tail = nullptr;
+}
+Node *List::getHead()
+{
+    return head;
+}
+Node *List::getTail()
+{
+    return tail;
+}
+void List::setHead(Node *h)
+{
+    head = h;
+}
+void List::setTail(Node *t)
+{
+    tail = t;
+}
+bool List::isEmpty()
+{
+    return head == nullptr;
+}
+int List::size()
+{
+    int size = 0;
+    if (isEmpty())
     {
-        head = tail = nullptr;
+        return size;
     }
-    void push_front(int val)
+    Node *temp = head;
+    while (temp != nullptr)
     {
-        Node *new_node = new Node(val);
-        if (head == nullptr)
-        {
-            head = tail = new_node;
-        }
-        else
-        {
-            new_node->next = head;
-            head->prev = new_node;
-            head = new_node;
-        }
+        size++;
+        temp = temp->getNext();
     }
-    void pop_front()
+    return size;
+}
+
+int List::count(int val)
+{
+    int count = 0;
+    if (isEmpty())
     {
-        if (head != nullptr)
+        return count;
+    }
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        if (temp->getData() == val)
         {
-            if (head->next == nullptr)
+            count++;
+        }
+        temp = temp->getNext();
+    }
+    return count;
+}
+int List::getFront()
+{
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return -1;
+    }
+    else
+    {
+        return head->getData();
+    }
+}
+int List::getBack()
+{
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return -1;
+    }
+    else
+    {
+        return tail->getData();
+    }
+}
+
+void List::display()
+{
+    if (head == nullptr)
+    {
+        cout << "List is empty" << endl;
+        return;
+    }
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        cout << temp->getData() << " ";
+        temp = temp->getNext();
+    }
+}
+
+void List::push_front(int val)
+{
+    Node *newNode = new Node(val);
+    if (isEmpty())
+    {
+        head = tail = newNode;
+    }
+    else
+    {
+        newNode->setNext(head);
+        head->setPrev(newNode);
+        head = newNode;
+    }
+}
+void List::pop_front()
+{
+    if (!isEmpty())
+        {
+            if (head->getNext() == nullptr)
             {
                 delete head;
                 head = tail = nullptr;
                 return;
             }
             Node *temp = head;
-            head = head->next;
-            head->prev = nullptr;
-            temp->next = nullptr;
+            head = head->getNext();
+            head->setPrev(nullptr);
+            temp->setNext(nullptr);
             delete temp;
         }
         else
@@ -61,37 +193,36 @@ public:
             return;
         }
     }
-
-    void push_back(int val)
+void List::push_back(int val)
+{
+    Node *newNode = new Node(val);
+    if (isEmpty())
     {
-        Node *new_node = new Node(val);
-        if (head == nullptr)
-        {
-            head = tail = new_node;
-        }
-        else
-        {
-            new_node->prev = tail;
-            tail->next = new_node;
-            tail = new_node;
-        }
+        head = tail = newNode;
     }
-
-    void pop_back()
+    else
     {
-        if (tail != nullptr)
+        newNode->setPrev(tail);
+        tail->setNext(newNode);
+        tail = newNode;
+    }
+}
+void List::pop_back()
+{
+    if (!isEmpty())
         {
-            if (tail->prev == nullptr)
+            if (tail->getPrev() == nullptr)
             {
                 delete tail;
                 head = tail = nullptr;
                 return;
             }
             Node *temp = tail;
-            tail = tail->prev;
-            tail->next = nullptr;
-            temp->prev = nullptr;
+            tail = tail->getPrev();
+            tail->setNext(nullptr);
+            temp->setPrev(nullptr);
             delete temp;
+            temp=nullptr;
         }
         else
         {
@@ -99,98 +230,20 @@ public:
             return;
         }
     }
-
-    void insert(int val, int ind)
-    {
-        Node *new_node = new Node(val);
-        Node *temp = head;
-        for (int i = 0; i < ind - 1; i++)
-        {
-            temp = temp->next;
-        }
-        new_node->prev = temp;
-        temp->next->prev = new_node;
-        new_node->next = temp->next;
-        temp->next = new_node;
-    }
-
-    void erase(int val)
-    {
-        int count =0;
-        Node *curr = head;
-        while (curr != nullptr)
-        {
-            if (curr->data == val)
-            {
-                count++;
-                if (curr->prev == nullptr)
-                {
-                    pop_front();
-                    curr=head;
-                }
-                else if (curr->next == nullptr)
-                {
-                    pop_back();
-                    curr=nullptr;
-                }
-                else
-                {
-                    Node *to_del = curr;
-                    Node *nextNode = curr->next;
-                    curr->prev->next = curr->next;
-                    curr->next->prev = curr->prev;
-                    to_del->prev = nullptr;
-                    to_del->next = nullptr;
-                    delete to_del;
-                    curr = nextNode;
-                }
-            }
-            else
-            {
-                curr = curr->next;
-            }
-        }
-        cout<<"Count is : "<<count<<endl;
-    }
-    void display()
-    {
-        Node *temp = head;
-        while (temp != nullptr)
-        {
-            cout << temp->data << " <--> ";
-            temp = temp->next;
-        }
-        cout << "nullptr\n\n";
-    }
-
-    void reverseDisplay()
-    {
-        Node *temp = tail;
-        while (temp != nullptr)
-        {
-            cout << temp->data << " <--> ";
-            temp = temp->prev;
-        }
-        cout << "nullptr\n\n";
-    }
-};
-int main()
+List::~List()
 {
-    DoublyList D1;
-    D1.push_front(1);
-    D1.push_front(3);
-    D1.push_front(4);
-    D1.push_front(3);
-    D1.push_front(7);
-    D1.push_back(9);
-    D1.push_back(15);
-    D1.insert(44, 3);
-    D1.display();
-    D1.reverseDisplay();
-    D1.pop_front();
-    D1.pop_back();
-    D1.display();
-    D1.erase(3);
-    D1.display();
-    return 0;
+    if (head == nullptr)
+    {
+        return;
+    }
+    Node *temp = head;
+    Node *nextNode;
+
+    while (temp != nullptr)
+    {
+        nextNode = temp->getNext();
+        delete temp;
+        temp = nextNode;
+    }
+    head = tail = nullptr;
 }
